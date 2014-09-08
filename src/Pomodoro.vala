@@ -19,14 +19,11 @@
 ***/
 
 namespace Pomodoro {
-    public class PomodoroApp : Granite.Application {
-        construct {
-            build_data_dir = Constants.DATADIR;
-            build_pkg_data_dir = Constants.PKGDATADIR;
-            build_release_name = Constants.RELEASE_NAME;
-            build_version = Constants.VERSION;
-            build_version_info = Constants.VERSION_INFO;
 
+    public class PomodoroApp : Granite.Application {
+        public Pomodoro.PomodoroWindow window = null;
+
+        construct {
             program_name = "Pomodoro";
             exec_name = "pomodoro";
             app_years = "2014";
@@ -37,11 +34,16 @@ namespace Pomodoro {
             help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
             about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
             about_license_type = Gtk.License.GPL_3_0;
-        }
-    }
+        }  
 
-    public static int main (string[] args) {
-        var application = PomodoroApp();
-        return app.run(args);
-    }
+        protected override void activate () {
+            window = new PomodoroWindow (this);
+            window.show ();  
+        }
+
+        public static int main (string[] args) {
+            var application = PomodoroApp();
+            return app.run(args);
+        }
+  }
 }

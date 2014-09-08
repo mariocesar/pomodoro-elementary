@@ -19,20 +19,18 @@
 ***/
 
 
-namespace Snap {
+namespace Pomodoro {
 
     public class PomodoroWindow : Gtk.Window {
+        private Pomodoro.PomodoroApp application;
 
-        public PomodoroWindow (Pomdoro.PomodoroApp application) {
+        public PomodoroWindow (Pomodoro.PomodoroApp application) {
           this.application = application;
           this.set_application(application);
           this.title = "Pomodoro";
-          this.show_all()
+          this.set_size_request (480, 480);
+          this.show_all();
         }
 
-        protected override void activate() {
-          window = new PomodoroWindow(this);
-          window.show();
-        }
     }
-        
+}
