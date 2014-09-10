@@ -163,8 +163,6 @@ dumb CMake questions.
 .. _Vala: http://live.gnome.org/Vala
 .. _Genie: http://live.gnome.org/Genie
 
-
-
 ..
    Local Variables:
    mode: rst

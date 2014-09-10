@@ -18,32 +18,36 @@
   END LICENSE
 ***/
 
+
 namespace Pomodoro {
 
-    public class PomodoroApp : Granite.Application {
-        public Pomodoro.PomodoroWindow window = null;
+  public class PomodoroApp : Granite.Application {
+    private PomodoroWindow window = null;
 
-        construct {
-            program_name = "Pomodoro";
-            exec_name = "pomodoro";
-            app_years = "2014";
-            app_icon = "pomodoro-app";
-            app_launcher = "pomodoro.desktop";
-            application_id = "net.launchpad.pomodoro-app";
-            main_url = "https://github.com/mariocesar/pomodoro-elementary";
-            help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
-            about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
-            about_license_type = Gtk.License.GPL_3_0;
-        }  
+    construct {
+      program_name = "Pomodoro";
+      exec_name = "pomodoro";
+      app_years = "2014";
+      app_icon = "pomodoro-app";
+      app_launcher = "pomodoro.desktop";
+      application_id = "net.launchpad.pomodoro-app";
+      main_url = "https://github.com/mariocesar/pomodoro-elementary";
+      help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
+      about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
+      about_license_type = Gtk.License.GPL_3_0;
+    }  
+    
+    
+    protected override void activate () {
+      window = new PomodoroWindow();
+      window.show();
+      add_window(window);
+    }
 
-        protected override void activate () {
-            window = new PomodoroWindow (this);
-            window.show ();  
-        }
-
-        public static int main (string[] args) {
-            var application = PomodoroApp();
-            return app.run(args);
-        }
+  }
+ 
+  public static int main (string[] args) {
+    var app = new PomodoroApp();
+    return app.run(args);
   }
 }

@@ -20,17 +20,13 @@
 
 
 namespace Pomodoro {
+  public class PomodoroWindow : Gtk.Window {
 
-    public class PomodoroWindow : Gtk.Window {
-        private Pomodoro.PomodoroApp application;
-
-        public PomodoroWindow (Pomodoro.PomodoroApp application) {
-          this.application = application;
-          this.set_application(application);
-          this.title = "Pomodoro";
-          this.set_size_request (480, 480);
-          this.show_all();
-        }
-
+    public PomodoroWindow () {
+      this.title = "Pomodoro";
+      this.set_size_request (480, 480);
+      this.show_all();
     }
+
+  }
 }
