@@ -17,13 +17,28 @@
 
   END LICENSE
 ***/
-
+using Gtk;
 
 namespace Pomodoro {
-  public class PomodoroWindow : Gtk.Window {
+  public class PomodoroWindow : Gtk.Dialog {
+    private Gtk.HeaderBar toolbar;
 
     public PomodoroWindow () {
-      this.title = "Pomodoro";
+      toolbar = new Gtk.HeaderBar ();
+      toolbar.show_close_button = true;
+      toolbar.set_title("Pomodoro");
+      toolbar.set_decoration_layout("close:");
+
+      var screen = this.get_screen();
+      var css_provider = new Gtk.CssProvider();
+      css_provider.load_from_path ("../share/style/default.css");
+
+      this.get_style_context().add_class("PomodoroWindow");
+      
+      var context = new Gtk.StyleContext();
+      context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
+
+      this.set_titlebar (toolbar);
       this.set_size_request (480, 480);
       this.show_all();
     }

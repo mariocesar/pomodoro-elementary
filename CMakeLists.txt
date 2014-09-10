@@ -8,6 +8,7 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/pomodoro")
+set (APP_NAME "Pomodoro")
 set (EXEC_NAME "pomodoro")
 set (RELEASE_NAME "Salsa Marinara.")
 set (VERSION "0.1")
@@ -50,4 +51,5 @@ PACKAGES
 add_executable(${EXEC_NAME} ${VALA_C})
 target_link_libraries (${EXEC_NAME} ${DEPS_LIBRARIES})
 
-install (TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
+install(FILES ${_datafiles} DESTINATION ${PKGDATADIR}/style)
+install(TARGETS ${EXEC_NAME} RUNTIME DESTINATION bin)
