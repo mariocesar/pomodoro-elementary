@@ -1,6 +1,9 @@
 
-
-GtkDialog {
+GtkDialog.PomodoroWindow {
     /* background-image: linear-gradient(45deg, #578902, #ABD54B);  */
     background-image: linear-gradient(45deg, #C30008, #E40613); 
+}
+
+GtkLabel.TimeDisplay {
+    font-size: 5em;
 }

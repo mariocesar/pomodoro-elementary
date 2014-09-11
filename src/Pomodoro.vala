@@ -18,25 +18,23 @@
   END LICENSE
 ***/
 
-
 namespace Pomodoro {
 
   public class PomodoroApp : Granite.Application {
     private PomodoroWindow window = null;
 
     construct {
-      program_name = "Pomodoro";
-      exec_name = "pomodoro";
-      app_years = "2014";
-      app_icon = "pomodoro-app";
-      app_launcher = "pomodoro.desktop";
-      application_id = "net.launchpad.pomodoro-app";
-      main_url = "https://github.com/mariocesar/pomodoro-elementary";
-      help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
-      about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
-      about_license_type = Gtk.License.GPL_3_0;
+        program_name = "Pomodoro";
+        exec_name = "pomodoro";
+        app_years = "2014";
+        app_icon = "preferences-system-time";
+        app_launcher = "pomodoro.desktop";
+        application_id = "net.launchpad.pomodoro-app";
+        main_url = "https://github.com/mariocesar/pomodoro-elementary";
+        help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
+        about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
+        about_license_type = Gtk.License.GPL_3_0;
     }  
-    
     
     protected override void activate () {
       window = new PomodoroWindow();

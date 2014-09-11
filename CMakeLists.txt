@@ -41,6 +41,7 @@ link_directories(${DEPS_LIBRARY_DIRS})
 link_libraries(${DEPS_LIBRARIES})
 
 vala_precompile(VALA_C ${EXEC_NAME}
+    src/Widgets/TimeDisplay.vala
     src/Pomodoro.vala
     src/PomodoroWindow.vala
 PACKAGES
