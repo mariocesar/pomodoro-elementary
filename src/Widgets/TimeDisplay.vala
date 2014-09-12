@@ -21,19 +21,8 @@
 namespace Pomodoro {
 
     public class TimeDisplay : Gtk.Label {
-        private Time time;
-
         public TimeDisplay() {
-            set_text("00:00");
             get_style_context().add_class("TimeDisplay");
-            update();
-            Timeout.add (100, update);
-        }
-
-        private bool update() {
-            time = Time.local(time_t());
-            set_text(time.format("%M:%S"));
-            return true;
         }
     }
 }

@@ -18,34 +18,64 @@
   END LICENSE
 ***/
 
+using Gtk;
+
 namespace Pomodoro {
+    public class PomodoroApp : Granite.Application {
+        private PomodoroWindow window = null;
 
-  public class PomodoroApp : Granite.Application {
-    private PomodoroWindow window = null;
+        construct {
+            program_name = "Pomodoro";
+            exec_name = "pomodoro";
+            app_years = "2014";
+            app_icon = "preferences-system-time";
+            app_launcher = "pomodoro.desktop";
+            application_id = "net.launchpad.pomodoro-app";
+            main_url = "https://github.com/mariocesar/pomodoro-elementary";
+            help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
+            about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
+            about_license_type = Gtk.License.GPL_3_0;
+        }
 
-    construct {
-        program_name = "Pomodoro";
-        exec_name = "pomodoro";
-        app_years = "2014";
-        app_icon = "preferences-system-time";
-        app_launcher = "pomodoro.desktop";
-        application_id = "net.launchpad.pomodoro-app";
-        main_url = "https://github.com/mariocesar/pomodoro-elementary";
-        help_url = "https://github.com/mariocesar/pomodoro-elementary/issues";
-        about_authors = {"Mario César Señoranis Ayala <mariocesar@creat1va.com>", null };
-        about_license_type = Gtk.License.GPL_3_0;
-    }  
-    
-    protected override void activate () {
-      window = new PomodoroWindow();
-      window.show();
-      add_window(window);
+        public void load_css_styles() {
+            // TODO: Fail loudly if the styles can't be loaded
+            try {
+                var css_provider = new CssProvider();
+                css_provider.load_from_path("../share/style/default.css");
+
+                Gtk.StyleContext.add_provider_for_screen(
+                    Gdk.Screen.get_default (),
+                    css_provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+            } catch (GLib.Error e) {
+                 warning ("Error while loading style/default.css: %s", e.message);
+            }
+
+            var settings = Gtk.Settings.get_default ();
+            settings.gtk_application_prefer_dark_theme = true;
+        }
+
+        protected override void activate () {
+
+            if (window != null) {
+                window.present ();
+                return;
+            }
+
+            Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
+
+            load_css_styles();
+
+            window = new PomodoroWindow();
+            window.show();
+
+            add_window(window);
+        }
+
     }
 
-  }
- 
-  public static int main (string[] args) {
-    var app = new PomodoroApp();
-    return app.run(args);
-  }
+    public static int main (string[] args) {
+        var app = new PomodoroApp();
+        return app.run(args);
+    }
 }

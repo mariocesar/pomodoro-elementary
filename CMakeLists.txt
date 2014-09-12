@@ -19,6 +19,7 @@ find_package(PkgConfig)
 
 set (PKG_DEPS
     gobject-2.0
+    glib-2.0
     granite>=0.3.0
     gtk+-3.0
 )
@@ -42,8 +43,9 @@ link_libraries(${DEPS_LIBRARIES})
 
 vala_precompile(VALA_C ${EXEC_NAME}
     src/Widgets/TimeDisplay.vala
-    src/Pomodoro.vala
+    src/TrackerManager.vala
     src/PomodoroWindow.vala
+    src/Pomodoro.vala
 PACKAGES
     ${VALA_DEPS}
     posix
