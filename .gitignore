@@ -23,6 +23,7 @@
 *.hex
 
 build/
+var/
 
 cmake/CMakeCache.txt
 cmake/CMakeFiles/

@@ -17,6 +17,7 @@
 
   END LICENSE
 ***/
+
 public struct Elapsed {
     public int hours;
     public int minutes;
@@ -27,28 +28,34 @@ public struct Elapsed {
     }
 
     public new string short_string() {
-        return "%02d:%02d".printf(minutes, seconds);
+        if (hours > 0) {
+            return "%02d:%02d".printf(hours, minutes);
+        } else{
+            return "%02d:%02d".printf(minutes, seconds);
+        }
     }
 }
 
 namespace Pomodoro {
 
     public class TrackerManager : Object {
-        private Timer timer;
+        public enum State {
+            STOPPED,
+            RUNNING,
+            PAUSED
+        }
 
+        private Timer timer;
+        public State state { get; private set; default = State.STOPPED; }
         public Elapsed elapsed = Elapsed() {
             hours = 0, minutes = 0, seconds = 0
         };
 
-        private bool running {get; private set; default = false;}
-        private bool paused {get; private set; default = false;}
-
-        public TrackerManager() {
-            timer = new Timer();
-        }
+        public TrackerManager() { timer = new Timer(); }
 
         public void start() {
-            if (paused) {
+            if (state == State.RUNNING) { return; }
+            if (state == State.PAUSED) {
                 timer.continue();
                 debug("Continue tracker");
             } else {
@@ -56,25 +63,34 @@ namespace Pomodoro {
                 debug("Start tracker");
             }
 
-            paused = false;
-            running = true;
-            Timeout.add(75, thick);
+            state = State.RUNNING;
+
+            Timeout.add(75, tick);
         }
 
         public void pause() {
-            paused = true;
-            running = false;
+            if (state == State.PAUSED) { return; }
+            state = State.PAUSED;
             timer.stop();
+            debug("Pause tracker");
         }
 
-        public void reset() {
+        public void stop() {
+            if (state == State.STOPPED) { return; }
+            state = State.STOPPED;
+
             timer.stop();
-            running = false;
-            paused = false;
+            elapsed = Elapsed() {
+                seconds = 0,
+                minutes = 0,
+                hours = 0
+            };
+
+            debug("Stop tracker");
         }
 
-        private bool thick() {
-            if (!running) {
+        private bool tick() {
+            if (state == State.STOPPED) {
                 return false;
             }
 
@@ -88,7 +104,7 @@ namespace Pomodoro {
                 hours = (int) total_hours % 24
             };
 
-            //debug("%s: %s".printf("%f".printf(timer.elapsed()) , elapsed.to_string()));
+            // debug("%s: %s".printf("%f".printf(timer.elapsed()) , elapsed.to_string()));
 
             return true;
         }

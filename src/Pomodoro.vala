@@ -22,7 +22,7 @@ using Gtk;
 
 namespace Pomodoro {
     public class PomodoroApp : Granite.Application {
-        private PomodoroWindow window = null;
+        private PomodoroWindow window;
 
         construct {
             program_name = "Pomodoro";
@@ -41,7 +41,7 @@ namespace Pomodoro {
             // TODO: Fail loudly if the styles can't be loaded
             try {
                 var css_provider = new CssProvider();
-                css_provider.load_from_path("../share/style/default.css");
+                css_provider.load_from_path("share/style/default.css");
 
                 Gtk.StyleContext.add_provider_for_screen(
                     Gdk.Screen.get_default (),
@@ -66,10 +66,11 @@ namespace Pomodoro {
 
             load_css_styles();
 
-            window = new PomodoroWindow();
-            window.show();
+            window = new PomodoroWindow(this);
+            window.destroy.connect (() => {
+                window = null;
+            });
 
-            add_window(window);
         }
 
     }

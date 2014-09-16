@@ -27,7 +27,13 @@ namespace Pomodoro {
     private Pomodoro.TimeDisplay time_display;
     private TrackerManager tracker;
 
-    public PomodoroWindow () {
+    private Gtk.Grid main_layout;
+    private Gtk.Button start_button;
+    private Gtk.Button stop_button;
+    private Gtk.Button pause_button;
+
+    public PomodoroWindow (Gtk.Application app) {
+        Object (application: app);
 
         toolbar = new Gtk.HeaderBar();
         toolbar.show_close_button = true;
@@ -40,24 +46,41 @@ namespace Pomodoro {
         resizable = false;
         set_size_request(480, 480);
 
-        var main_layout = new Gtk.Grid ();
+        tracker = new TrackerManager();
+        time_display = new Pomodoro.TimeDisplay();
+        start_button = new Gtk.Button.with_label("start");
+        stop_button = new Gtk.Button.with_label("stop");
+        pause_button = new Gtk.Button.with_label("pause");
+
+        start_button.clicked.connect(() => {
+            tracker.start();
+        });
+        stop_button.clicked.connect(() => {
+            tracker.stop();
+            time_display.set_text(tracker.elapsed.short_string());
+        });
+        pause_button.clicked.connect(() => {
+            tracker.pause();
+        });
+
+        main_layout = new Gtk.Grid();
         main_layout.expand = true;
         main_layout.orientation = Gtk.Orientation.VERTICAL;
 
-        tracker = new TrackerManager();
-        tracker.start();
-
-        time_display = new Pomodoro.TimeDisplay();
         main_layout.add(time_display);
-        add(main_layout);
-        show_all();
+        main_layout.add(start_button);
+        main_layout.add(stop_button);
+        main_layout.add(pause_button);
 
+        add(main_layout);
         update_time_display();
+
+        show_all();
     }
 
     private void update_time_display() {
         // TODO: Update the display just when the widget is show to the user
-        Timeout.add(500, ()=>{
+        Timeout.add(250, ()=>{
             time_display.set_text(tracker.elapsed.short_string());
             return true;
         });
