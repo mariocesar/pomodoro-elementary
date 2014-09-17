@@ -50,6 +50,7 @@ namespace Pomodoro {
 
         public PomodoroWindow (Gtk.Application app) {
             Object (application: app);
+            get_style_context().add_class("pomodoro-window");
 
             toolbar = new Gtk.HeaderBar();
             toolbar.show_close_button = true;
@@ -86,6 +87,10 @@ namespace Pomodoro {
             control_layout.add(play_button);
             control_layout.add(stop_button);
 
+            var phases = new Gtk.Label("⬤⬤⬤ ●●● 😃😃 😄😄");
+            phases.get_style_context().add_class("phases-counter");
+
+            main_layout.add(phases);
             main_layout.add(time_display);
             main_layout.add(control_layout);
 
