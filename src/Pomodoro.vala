@@ -51,8 +51,8 @@ namespace Pomodoro {
                  warning ("Error while loading style/default.css: %s", e.message);
             }
 
-            var settings = Gtk.Settings.get_default ();
-            settings.gtk_application_prefer_dark_theme = true;
+            // var settings = Gtk.Settings.get_default ();
+            // settings.gtk_application_prefer_dark_theme = true;
         }
 
         protected override void activate () {

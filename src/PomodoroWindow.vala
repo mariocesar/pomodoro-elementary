@@ -23,14 +23,14 @@ using Gtk;
 namespace Pomodoro {
 
   public class PomodoroWindow : Gtk.Window {
-    private Gtk.HeaderBar toolbar;
     private Pomodoro.TimeDisplay time_display;
-    private TrackerManager tracker;
+    private Pomodoro.Timer timer;
 
+    private Gtk.HeaderBar toolbar;
     private Gtk.Grid main_layout;
-    private Gtk.Button start_button;
+    private Gtk.Grid control_layout;
+    private Gtk.Button play_button;
     private Gtk.Button stop_button;
-    private Gtk.Button pause_button;
 
     public PomodoroWindow (Gtk.Application app) {
         Object (application: app);
@@ -46,42 +46,84 @@ namespace Pomodoro {
         resizable = false;
         set_size_request(480, 480);
 
-        tracker = new TrackerManager();
-        time_display = new Pomodoro.TimeDisplay();
-        start_button = new Gtk.Button.with_label("start");
-        stop_button = new Gtk.Button.with_label("stop");
-        pause_button = new Gtk.Button.with_label("pause");
+        timer = new Pomodoro.Timer();
+        timer.timer_paused.connect(timer_paused);
+        timer.timer_started.connect(timer_started);
+        timer.timer_stopped.connect(timer_stoped);
 
-        start_button.clicked.connect(() => {
-            tracker.start();
-        });
-        stop_button.clicked.connect(() => {
-            tracker.stop();
-            time_display.set_text(tracker.elapsed.short_string());
-        });
-        pause_button.clicked.connect(() => {
-            tracker.pause();
-        });
+        time_display = new Pomodoro.TimeDisplay();
+
+        play_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
+        play_button.expand = true;
+        play_button.set_tooltip_text ("Start");
+
+        stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
+        stop_button.expand = true;
+        stop_button.set_tooltip_text ("Stop");
+
+        play_button.clicked.connect(() => {start_pause_timer();});
+
+        stop_button.clicked.connect(() => {stop_timer();});
 
         main_layout = new Gtk.Grid();
         main_layout.expand = true;
         main_layout.orientation = Gtk.Orientation.VERTICAL;
 
+        control_layout = new Gtk.Grid();
+        control_layout.vexpand = false;
+        control_layout.orientation = Gtk.Orientation.HORIZONTAL;
+
+        control_layout.add(play_button);
+        control_layout.add(stop_button);
+
         main_layout.add(time_display);
-        main_layout.add(start_button);
-        main_layout.add(stop_button);
-        main_layout.add(pause_button);
+        main_layout.add(control_layout);
 
         add(main_layout);
         update_time_display();
 
         show_all();
     }
+    public virtual void timer_started () {
+        play_button.set_image (new Gtk.Image.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.LARGE_TOOLBAR));
+        play_button.set_tooltip_text ("Pause");
+    }
+
+    public virtual void timer_paused () {
+        play_button.set_image (new Gtk.Image.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR));
+        play_button.set_tooltip_text ("Start");
+    }
+
+    public virtual void timer_stoped (bool was_running) {
+        if (was_running) {
+            timer_paused();
+        }
+
+        time_display.set_text(timer.elapsed.short_string());
+    }
+
+    public virtual void start_pause_timer () {
+        switch (timer.state) {
+            case Pomodoro.Timer.State.RUNNING:
+                timer.pause();
+                break;
+            case Pomodoro.Timer.State.STOPPED:
+                timer.start();
+                break;
+            case Pomodoro.Timer.State.PAUSED:
+                timer.start();
+                break;
+        }
+    }
+
+    public virtual void stop_timer() {
+        timer.stop();
+    }
 
     private void update_time_display() {
         // TODO: Update the display just when the widget is show to the user
         Timeout.add(250, ()=>{
-            time_display.set_text(tracker.elapsed.short_string());
+            time_display.set_text(timer.elapsed.short_string());
             return true;
         });
     }

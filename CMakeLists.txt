@@ -43,7 +43,7 @@ link_libraries(${DEPS_LIBRARIES})
 
 vala_precompile(VALA_C ${EXEC_NAME}
     src/Widgets/TimeDisplay.vala
-    src/TrackerManager.vala
+    src/PomodoroTimer.vala
     src/PomodoroWindow.vala
     src/Pomodoro.vala
 PACKAGES

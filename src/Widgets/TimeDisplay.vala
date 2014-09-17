@@ -22,6 +22,7 @@ namespace Pomodoro {
 
     public class TimeDisplay : Gtk.Label {
         public TimeDisplay() {
+            expand = true;
             get_style_context().add_class("TimeDisplay");
         }
     }
