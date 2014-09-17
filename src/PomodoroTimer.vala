@@ -18,6 +18,88 @@
   END LICENSE
 ***/
 
+public class Pomodoro.Bell : Object {
+    private Canberra.Context? canberra;
+    private string sound;
+    private Notify.Notification? notification;
+
+    public delegate void ActionCallback ();
+
+    public Bell (string soundid, string title, string msg) {
+        if (Canberra.Context.create (out canberra) < 0) {
+            warning ("Sound will not be available");
+            canberra = null;
+        }
+
+        sound = soundid;
+        notification = null;
+
+        if (Notify.is_initted() || Notify.init ("GNOME Clocks")) {
+            notification = new Notify.Notification (title, msg, "gnome-clocks");
+            notification.set_hint_string ("desktop-entry", "gnome-clocks");
+        } else {
+            warning ("Could not initialize notification");
+        }
+    }
+
+    private bool keep_ringing () {
+        Canberra.Proplist pl;
+        Canberra.Proplist.create (out pl);
+        pl.sets (Canberra.PROP_EVENT_ID, sound);
+        pl.sets (Canberra.PROP_MEDIA_ROLE, "alarm");
+
+        canberra.play_full (1, pl, (c, id, code) => {
+            if (code == Canberra.SUCCESS) {
+                GLib.Idle.add (keep_ringing);
+            }
+        });
+
+        return false;
+    }
+
+    private void ring_real (bool once) {
+        if (canberra != null) {
+            if (once) {
+                canberra.play (1,
+                               Canberra.PROP_EVENT_ID, sound,
+                               Canberra.PROP_MEDIA_ROLE, "alarm");
+            } else {
+                GLib.Idle.add (keep_ringing);
+            }
+        }
+
+        if (notification != null) {
+            try {
+                notification.show ();
+            } catch (GLib.Error error) {
+                warning (error.message);
+            }
+        }
+    }
+
+    public void ring_once () {
+        ring_real (true);
+    }
+
+    public void ring () {
+        ring_real (false);
+    }
+
+    public void stop () {
+        if (canberra != null) {
+            canberra.cancel (1);
+        }
+    }
+
+    public void add_action (string action, string label, owned ActionCallback callback) {
+        if (notification != null) {
+            notification.add_action (action, label, (n, a) => {
+                callback ();
+            });
+        }
+    }
+}
+
 
 public class Pomodoro.Timer : Object {
 
@@ -46,13 +128,20 @@ public class Pomodoro.Timer : Object {
     }
 
     private GLib.Timer timer;
+    private Pomodoro.Bell bell_done;
+    // private Pomodoro.Bell bell_alert;
 
     public signal void timer_stopped (bool was_running=false);
     public signal void timer_started (bool was_paused=false);
     public signal void timer_paused ();
     public State state { get; private set; default = State.STOPPED; }
 
-    public Timer() { timer = new GLib.Timer(); }
+    public Timer() {
+        timer = new GLib.Timer();
+
+        bell_done = new Pomodoro.Bell ("complete", "Time is up!", "Timer countdown finished");
+        // bell_alert = new Pomodoro.Bell ("alarm-clock-elapsed", "Alarm", "Alarm");
+    }
 
     public void start() {
         if (state == State.RUNNING) { return; }
@@ -66,8 +155,9 @@ public class Pomodoro.Timer : Object {
             debug("Start timer");
         }
 
-        state = State.RUNNING;
+        bell_done.ring_once ();
 
+        state = State.RUNNING;
     }
 
     public void pause() {

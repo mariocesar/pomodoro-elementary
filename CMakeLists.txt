@@ -22,11 +22,15 @@ set (PKG_DEPS
     glib-2.0
     granite>=0.3.0
     gtk+-3.0
+    libcanberra
+    libnotify
 )
 
 set (VALA_DEPS
     gobject-2.0
     granite
+    libcanberra
+    libnotify
 )
 
 find_package(Vala REQUIRED)
