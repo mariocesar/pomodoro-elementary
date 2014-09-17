@@ -51,18 +51,18 @@ namespace Pomodoro {
         timer.timer_started.connect(timer_started);
         timer.timer_stopped.connect(timer_stoped);
 
-        time_display = new Pomodoro.TimeDisplay();
+        time_display = new Pomodoro.TimeDisplay(timer);
 
         play_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         play_button.expand = true;
         play_button.set_tooltip_text ("Start");
+        play_button.get_style_context ().add_class ("suggested-action");
 
         stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         stop_button.expand = true;
         stop_button.set_tooltip_text ("Stop");
 
         play_button.clicked.connect(() => {start_pause_timer();});
-
         stop_button.clicked.connect(() => {stop_timer();});
 
         main_layout = new Gtk.Grid();
@@ -80,26 +80,32 @@ namespace Pomodoro {
         main_layout.add(control_layout);
 
         add(main_layout);
-        update_time_display();
 
         show_all();
     }
     public virtual void timer_started () {
+        if (time_display.get_tick_id() == 0) {
+            time_display.add_tick();
+        }
+
         play_button.set_image (new Gtk.Image.from_icon_name ("media-playback-pause-symbolic", Gtk.IconSize.LARGE_TOOLBAR));
         play_button.set_tooltip_text ("Pause");
     }
 
     public virtual void timer_paused () {
+        time_display.remove_tick();
+
         play_button.set_image (new Gtk.Image.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR));
         play_button.set_tooltip_text ("Start");
     }
 
     public virtual void timer_stoped (bool was_running) {
+        time_display.remove_tick();
+        time_display.reset_text();
+
         if (was_running) {
             timer_paused();
         }
-
-        time_display.set_text(timer.elapsed.short_string());
     }
 
     public virtual void start_pause_timer () {
@@ -118,14 +124,6 @@ namespace Pomodoro {
 
     public virtual void stop_timer() {
         timer.stop();
-    }
-
-    private void update_time_display() {
-        // TODO: Update the display just when the widget is show to the user
-        Timeout.add(250, ()=>{
-            time_display.set_text(timer.elapsed.short_string());
-            return true;
-        });
     }
   }
 }

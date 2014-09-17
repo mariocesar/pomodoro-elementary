@@ -21,9 +21,53 @@
 namespace Pomodoro {
 
     public class TimeDisplay : Gtk.Label {
-        public TimeDisplay() {
+        private Pomodoro.Timer timer;
+        private uint tick_id = 0;
+
+        public TimeDisplay(Pomodoro.Timer timer) {
+            this.timer = timer;
+
             expand = true;
             get_style_context().add_class("TimeDisplay");
+            reset_text();
+        }
+
+        public uint get_tick_id() {
+            return tick_id;
+        }
+
+        public void reset_text() {
+            set_text("00:00");
+        }
+
+        private void update_text(Pomodoro.Timer.Elapsed elapsed) {
+            set_text(elapsed.short_string());
+
+            if (get_mapped()) {
+                queue_draw();
+            }
+        }
+
+        public bool tick() {
+            var elapsed = timer.get_elapsed ();
+            update_text(elapsed);
+            return true;
+
+        }
+
+        public void add_tick () {
+            if (tick_id == 0) {
+                tick_id = add_tick_callback ((c) => {
+                    return tick();
+                });
+            }
+        }
+
+        public void remove_tick () {
+            if (tick_id != 0) {
+                remove_tick_callback (tick_id);
+                tick_id = 0;
+            }
         }
     }
 }

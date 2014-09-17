@@ -18,30 +18,27 @@
   END LICENSE
 ***/
 
-public struct Elapsed {
-    public int hours;
-    public int minutes;
-    public int seconds;
-
-    public new string to_string() {
-        return (@"$(hours) hours, $(minutes) minutes and $(seconds) seconds");
-    }
-
-    public new string short_string() {
-        if (hours > 0) {
-            return "%02d:%02d".printf(hours, minutes);
-        } else{
-            return "%02d:%02d".printf(minutes, seconds);
-        }
-    }
-}
-
-
-public class Pomodoro.Phases : Object {
-
-}
 
 public class Pomodoro.Timer : Object {
+
+    public struct Elapsed {
+        public int hours;
+        public int minutes;
+        public int seconds;
+
+        public new string to_string() {
+            return (@"$(hours) hours, $(minutes) minutes and $(seconds) seconds");
+        }
+
+        public new string short_string() {
+            if (hours > 0) {
+                return "%02d:%02d".printf(hours, minutes);
+            } else{
+                return "%02d:%02d".printf(minutes, seconds);
+            }
+        }
+    }
+
     public enum State {
         STOPPED,
         RUNNING,
@@ -53,11 +50,7 @@ public class Pomodoro.Timer : Object {
     public signal void timer_stopped (bool was_running=false);
     public signal void timer_started (bool was_paused=false);
     public signal void timer_paused ();
-
     public State state { get; private set; default = State.STOPPED; }
-    public Elapsed elapsed = Elapsed() {
-        hours = 0, minutes = 0, seconds = 0
-    };
 
     public Timer() { timer = new GLib.Timer(); }
 
@@ -75,7 +68,6 @@ public class Pomodoro.Timer : Object {
 
         state = State.RUNNING;
 
-        Timeout.add(75, tick);
     }
 
     public void pause() {
@@ -92,12 +84,6 @@ public class Pomodoro.Timer : Object {
 
         var was_running = state == State.RUNNING ? true : false;
 
-        elapsed = Elapsed() {
-            seconds = 0,
-            minutes = 0,
-            hours = 0
-        };
-
         state = State.STOPPED;
         timer.stop();
 
@@ -106,16 +92,13 @@ public class Pomodoro.Timer : Object {
         debug(@"Stop timer. running=$was_running");
     }
 
-    private bool tick() {
-        if (state == State.STOPPED) {
-            return false;
-        }
+    public Elapsed get_elapsed() {
 
         var total_seconds = (int) timer.elapsed();
         var total_minutes = (int) total_seconds / 60;
         var total_hours = (int) total_seconds / (60 * 60);
 
-        elapsed = Elapsed() {
+        var elapsed = Elapsed() {
             seconds = (int) total_seconds % 60,
             minutes = (int) total_minutes % 60,
             hours = (int) total_hours % 24
@@ -123,6 +106,6 @@ public class Pomodoro.Timer : Object {
 
         // debug("%s: %s".printf("%f".printf(timer.elapsed()) , elapsed.to_string()));
 
-        return true;
+        return elapsed;
     }
 }
