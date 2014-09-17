@@ -5,5 +5,9 @@ GtkDialog.PomodoroWindow {
 }
 
 GtkLabel.TimeDisplay {
-    font-size: 5em;
+    font-size: 48px;
+}
+
+GtkButton.control-button {
+    font-size: 14px;
 }

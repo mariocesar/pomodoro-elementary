@@ -57,10 +57,12 @@ namespace Pomodoro {
         play_button.expand = true;
         play_button.set_tooltip_text ("Start");
         play_button.get_style_context ().add_class ("suggested-action");
+        play_button.get_style_context ().add_class ("control-button");
 
         stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         stop_button.expand = true;
         stop_button.set_tooltip_text ("Stop");
+        play_button.get_style_context ().add_class ("control-button");
 
         play_button.clicked.connect(() => {start_pause_timer();});
         stop_button.clicked.connect(() => {stop_timer();});
