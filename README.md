@@ -1,4 +1,4 @@
-# Pomodoro Timer
+Pomodoro Timer
 ===========================================
 
 A simple Pomodoro app made for elementary OS.
