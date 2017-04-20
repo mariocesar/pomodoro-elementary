@@ -9,4 +9,16 @@ A simple Pomodoro app made for elementary OS.
 
 ## Installation instruction
 
-(_in progress_)
+Create the build environment
+
+    mkdir build
+    cd build/
+
+Run `cmake` and then `make` to build
+
+    cmake ..
+    make
+
+Install with `sudo make install`. Then open the application with `pomodoro`.
+
+    sudo make install    
